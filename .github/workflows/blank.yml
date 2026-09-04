@@ -12,8 +12,8 @@ runs-on: ubuntu-latest
 steps:
 - uses: actions/checkout@v4
 
-- name: Check files exist
-run: |
-echo "Checking your files..."
-ls -R
-echo "Workflow works!"
+name: Check files exist <- 6 spaces from left
+run: | <- 8 spaces
+echo "Checking..." <- 10 spaces <-- THIS ONE
+ls -R <- 10 spaces <-- AND THIS ONE
+echo "Workflow works!" <- 10 spaces <-- AND THIS ONE
