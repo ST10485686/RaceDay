@@ -1,87 +1,53 @@
-*RaceDay - Race Event Management System*
- *Part 1 Planning*
+**RaceDay**
 
-*Brief Description of the System*
+RaceDay is a race/event management system that lets Organisers create and manage race events (e.g. marathons, trail runs, fun runs), and lets Participants discover events, enrol in specific entry categories (e.g. 10km, 21km, 42km), and view their results once a race has taken place.
 
-RaceDay is a role-based REST API platform for managing running events. The system allows Organisers to create and manage race events, define multiple categories per event, track enrolments, and publish official results. Participants can browse upcoming events, enrol in specific categories, manage their enrolments, and view their race results history. The system enforces strict role-based access control via JWT authentication.
+This repository currently contains Part 1: System Planning and Database — the ERD, API endpoint plan, and SQL database script for the system, committed inside /docs before any application code is written.
 
-*Roles Description*
-1. *Organiser*
-*Purpose*: Event creator and manager
-*Capabilities*
-Register/login, manage own profile, CRUD own Events, CRUD Categories for own Events, view all Enrolments for own Events, publish/edit/delete Results for own Events, view Participants list
-*Restrictions*: Cannot enrol in events as a Participant, cannot edit/delete other Organisers' events, cannot enrol if event has passed or category is full.
+**Roles**
+Organiser — represents a race organisation. An Organiser can create, update, and delete their own events; define entry categories per event; view and manage enrolments for their events; attach documents (route maps, rules) to their events; and capture/update race results.
+Participant — represents a person taking part in races. A Participant can browse public events and categories, enrol themselves into a category (receiving a bib number), view their own enrolments, withdraw from a category, and view results for events they took part in.
 
-2.* Participant*
-*Purpose*: End-user who competes in races
-*Capabilities*: Register/login, manage own profile, browse all Events and Categories (public), enrol in a Category, view own Enrolments, cancel own Enrolment before results are published, view Results for any Category/Event, view own results history
-*Restrictions*: Cannot create events, cannot publish results, cannot view other participants' private data, cannot double-enrol in same category (UNIQUE constraint)
+Both roles are registered through the same Users table and are distinguished by a Role column; Organisers and Participants each extend Users in a one-to-one relationship, matching the ERD below.
 
-*Folder Structure*
-/docs
-  ├── erd.png               
-  ├── erd_description.md     
-  ├── endpoint_plan.md       
-  └── schema.sql            
-.github/workflows/
-  └── validate.yml           
-README.md    
+**Planning Documents (/docs)**
 
-ERD
-<img width="1920" height="1280" alt="raceday_erd" src="https://github.com/user-attachments/assets/e5885c35-ee0a-413b-b494-16b812a9c498" />
+**File	Description**
+RaceDay_ERD.png	Entity Relationship Diagram for the full RaceDay data model (8 entities).
+API_Endpoint_Plan.md	Full table of every planned API endpoint: method, route, description, role required, request body, and expected response.
+RaceDay_Schema.sql	SQL Server script that creates the schema (with PKs, FKs, and constraints) and seeds it with sample data.
+validate-structure.yml	GitHub Actions workflow (place in .github/workflows/) that checks the /docs folder and required files exist on every push/PR.
+**ERD Diagram**
 
+The ERD is included as a PNG file in the repository. You can view it here.
 
-*Entities*
+Key relationships:
 
-Users (UserId PK, Email UNIQUE, Role CHECK), Events (EventId PK, OrganiserId FK), Categories (CategoryId PK, EventId FK, UNIQUE EventId+Name), Enrolments (EnrolmentId PK, ParticipantId FK, CategoryId FK, UNIQUE Participant+Category), Results (ResultId PK, EnrolmentId FK UNIQUE)
+Users (1) to Organisers (1): one-to-one. An Organiser is a specific type of User.
+Users (1) to Participants (1): one-to-one. A Participant is a specific type of User.
+Organisers (1) to Events (M): one-to-many. One Organiser can create many Events.
+Events (1) to Categories (M): one-to-many. An Event can have many entry Categories.
+Categories (1) to EventEnrolments (M): one-to-many. A Category can have many Enrolments.
+Participants (1) to EventEnrolments (M): one-to-many. A Participant can hold many Enrolments (across different events/categories).
+EventEnrolments (1) to Results (1): one-to-one. Each Enrolment can have one final Result.
+Events (1) to Documents (M): one-to-many. An Event can have many associated Documents.
 
-*Key Design Decisions:*
+**CI/CD Workflow**
 
-Single Users table with Role discriminator for simpler Auth - satisfies 2 Organisers + 2 Participants seed requirement
-Categories separate from Events to allow one event to have multiple distances/fees
-Enrolments as junction table with UNIQUE(ParticipantId, CategoryId) to prevent duplicate enrolments - maps to POST /api/categories/{id}/enrolments 409 Conflict
-Results 1-to-1 with Enrolments (UNIQUE FK) - ensures one result per enrolment
-All FKs ON DELETE CASCADE, CHECK constraints for data integrity (Distance >0, Fee >=0, FinishTime >0)
+A GitHub Actions workflow (validate-structure.yml) validates that the /docs folder exists and contains the required planning files on every push and pull request to main.
+
+**CI screenshot**:
 
 
-*Endpoint Plan*
-See docs/endpoint_plan.md - 26 endpoints covering:
+**YouTube (unlisted)**: 
 
-Authentication (register, login) - Role: None
-User Profile (GET/PUT me) - Role: Any
-Events (CRUD + list) - Organiser for write, None for read
-Categories (CRUD per event) - Organiser for write, None for read
-Event Enrolments (enrol, list, cancel) - Participant for enrol, Organiser for view
-Results (publish, list, update) - Organiser for write, None for read
-Each endpoint includes Method, Route (/api/...), Description, Role Required, Request Body, Expected Response with failure codes (400, 401, 403, 404, 409).
-
-*SQL Script*
-File: docs/schema.sql
-
-Tested on clean SQL Server instance (SSMS 20+)
-Creates database RaceDayDB
-Creates 5 tables with PK, FK, UNIQUE, NOT NULL, CHECK, DEFAULT constraints
-Seeds: 2 Organisers (Sarah, David), 3 Participants (Thabo, Emily, Lerato), 3 Events (Cape Town, Stellenbosch, Joburg), 7 Categories, 6 Enrolments, 2 Results
-Final verification SELECT at end
-To run: Open SSMS > Open File > Execute > Check Messages for count verification.
-
-*CI/CD*
-Workflow: .github/workflows/validate.yml
-
-Triggers on push to main/master and PRs
-Steps: Checkout, check /docs exists, check required files present, validate SQL file exists and non-empty
-Generates green build badge
-
-*CI/CD Screenshot*
-Image unavailable. Please retry the request.
-Insert screenshot of successful green build here after first push to GitHub. Workflow name: Validate Repository Structure
-
-
-*Video Presentation*
-Unlisted YouTube Link: [INSERT YOUR YOUTUBE LINK HERE]
-Video covers:
-
-ERD decisions and cardinality explanation
-Endpoint plan choices and role matrix
-SQL script design with constraints
-Live run of schema.sql in SSMS
+**Repository Structure**
+/
+├── docs/
+│   ├── RaceDay_ERD.png
+│   ├── API_Endpoint_Plan.md
+│   └── RaceDay_Schema.sql
+├── .github/
+│   └── workflows/
+│       └── validate-structure.yml
+└── README.md
