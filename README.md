@@ -21,6 +21,8 @@ validate-structure.yml	GitHub Actions workflow (place in .github/workflows/) tha
 **ERD Diagram**
 
 The ERD is included as a PNG file in the repository. You can view it here.
+<img width="1816" height="2823" alt="RaceDay_ERD (1)" src="https://github.com/user-attachments/assets/2ecc92ac-e99d-4930-8d6c-4751749a563f" />
+
 
 **Key relationships:**
 
