@@ -1,16 +1,16 @@
-**RaceDay**
+# **RaceDay**
 
-RaceDay is a race/event management system that lets Organisers create and manage race events (e.g. marathons, trail runs, fun runs), and lets Participants discover events, enrol in specific entry categories (e.g. 10km, 21km, 42km), and view their results once a race has taken place.
+RaceDay is a race/event management system that lets Organisers create and manage race events (e.g. marathons, trail runs, fun runs), and lets Participants discover events, enrol in specific entry categories, and view their results once a race has taken place.
 
 This repository currently contains Part 1: System Planning and Database — the ERD, API endpoint plan, and SQL database script for the system, committed inside /docs before any application code is written.
 
-**Roles**
+## **Roles**
 Organiser — represents a race organisation. An Organiser can create, update, and delete their own events; define entry categories per event; view and manage enrolments for their events; attach documents (route maps, rules) to their events; and capture/update race results.
 Participant — represents a person taking part in races. A Participant can browse public events and categories, enrol themselves into a category (receiving a bib number), view their own enrolments, withdraw from a category, and view results for events they took part in.
 
 Both roles are registered through the same Users table and are distinguished by a Role column; Organisers and Participants each extend Users in a one-to-one relationship, matching the ERD below.
 
-**Planning Documents (/docs)**
+###**Planning Documents (/docs)**
 
 **File	Description**
 RaceDay_ERD.png	Entity Relationship Diagram for the full RaceDay data model (8 entities).
