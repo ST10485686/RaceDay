@@ -1,5 +1,4 @@
-name: Validate Repository Structure
-
+name: RaceDay
 on:
   push:
     branches: [ main ]
