@@ -17,20 +17,21 @@ RaceDay_ERD.png	Entity Relationship Diagram for the full RaceDay data model (8 e
 API_Endpoint_Plan.md	Full table of every planned API endpoint: method, route, description, role required, request body, and expected response.
 RaceDay_Schema.sql	SQL Server script that creates the schema (with PKs, FKs, and constraints) and seeds it with sample data.
 validate-structure.yml	GitHub Actions workflow (place in .github/workflows/) that checks the /docs folder and required files exist on every push/PR.
+
 **ERD Diagram**
 
 The ERD is included as a PNG file in the repository. You can view it here.
 
-Key relationships:
+**Key relationships:**
 
-Users (1) to Organisers (1): one-to-one. An Organiser is a specific type of User.
-Users (1) to Participants (1): one-to-one. A Participant is a specific type of User.
-Organisers (1) to Events (M): one-to-many. One Organiser can create many Events.
-Events (1) to Categories (M): one-to-many. An Event can have many entry Categories.
-Categories (1) to EventEnrolments (M): one-to-many. A Category can have many Enrolments.
-Participants (1) to EventEnrolments (M): one-to-many. A Participant can hold many Enrolments (across different events/categories).
-EventEnrolments (1) to Results (1): one-to-one. Each Enrolment can have one final Result.
-Events (1) to Documents (M): one-to-many. An Event can have many associated Documents.
+**Users (1) to Organisers (1): one-to-one. An Organiser is a specific type of User.**
+**Users (1) to Participants (1): one-to-one. A Participant is a specific type of User.**
+**Organisers (1) to Events (M): one-to-many. One Organiser can create many Events.**
+**Events (1) to Categories (M): one-to-many. An Event can have many entry Categories.**
+**Categories (1) to EventEnrolments (M): one-to-many. A Category can have many Enrolments.**
+**Participants (1) to EventEnrolments (M): one-to-many. A Participant can hold many Enrolments (across different events/categories).**
+**EventEnrolments (1) to Results (1): one-to-one. Each Enrolment can have one final Result.**
+**Events (1) to Documents (M): one-to-many. An Event can have many associated Documents.**
 
 **CI/CD Workflow**
 
