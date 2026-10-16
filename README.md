@@ -42,10 +42,15 @@ The ERD is included as a PNG file in the repository. You can view it <img width=
 A GitHub Actions workflow (`validate-structure.yml`) validates that the `/docs` folder exists and contains the required planning files on every push and pull request to `main`.
 
 **CI screenshot:** 
+<img width="1007" height="572" alt="workflow" src="https://github.com/user-attachments/assets/ef2b58ba-45ad-428f-9dc7-bc66b86fca42" />
+<img width="1460" height="496" alt="workflow 1" src="https://github.com/user-attachments/assets/7b09c80b-5943-4448-b77d-8b4c3c2dc2d5" />
+<img width="1041" height="570" alt="workflow3" src="https://github.com/user-attachments/assets/9a3db8e9-3b95-47a6-9611-33d5f40f3e5a" />
+
 
 ## Video Walkthrough
 
-**YouTube (unlisted):** _
+**YouTube (unlisted):** 
+https://youtu.be/1OOVXaJ33UM
 
 ## Repository Structure
 
