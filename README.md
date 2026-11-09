@@ -1,68 +1,65 @@
-# RaceDay
+# RaceDay Platform - Full Stack Application
 
-RaceDay is a race/event management system. Any registered **User** can create and manage their own race events (e.g. marathons, trail runs, fun runs) made up of one or more **Races** (e.g. a 10km and a 21km on the same day), and any registered User can **register** for a race, get a bib number, and view their **Result** and **Payment** once registered. Events can also carry one or more **Sponsors**.
+A complete, end-to-end web platform for managing sailing regattas and catamaran racing events. This repository contains the RESTful API, the MVC Web Application, and the automated testing suite.
 
-This repository currently contains **Part 1: System Planning and Database** — the ERD, API endpoint plan, and SQL database script for the system, committed inside `/docs` before any application code is written.
+## 📋Table of Contents
+1. [System Overview](#-system-overview)
+2. [Architecture & Tech Stack](#-architecture--tech-stack)
+3. [User Roles](#-user-roles)
+4. [Setup & Running Locally](#-setup--running-locally)
+5. [Docker Containerization](#-docker-containerization)
+6. [Azure Blob Storage](#-azure-blob-storage)
+7. [CI/CD Pipeline](#-cicd-pipeline)
+8. [YouTube Walkthrough](https://youtu.be/4gpE-81fQNU)
 
-## Roles
+---
 
-RaceDay uses a single `User` table rather than separate role-specific tables — a person's role is defined by *how they use the system*, not by which table they sit in:
+##  System Overview
+The RaceDay platform allows sailing clubs to organize events and participants to enroll in races. 
+*   **Part 1:** System planning (ERD, API Endpoint Plan, SQL Script) — located in the `/docs` folder.
+*   **Part 2:** RESTful API built with ASP.NET Core 8 and Entity Framework Core.
+*   **Part 3:** ASP.NET Core MVC front-end consuming the API, featuring session management, role-based UI, and Azure Blob Storage integration for event banners.
 
-- **Organiser** — a User who creates events. Referenced as `organizer_id` on `Event`. An Organiser can create, update, and delete their own events; define the races within an event; attach sponsors to their events; view registrations for their races; and capture/update race results.
-- **Participant** — a User who registers for races. A Participant can browse public events and races, register for a race (receiving a bib number), make a payment for their registration, view their own registrations, and view their result once a race has taken place.
+---
 
-The same person can act as both — nothing stops a User who organises one event from registering for another. Role is enforced at the API layer (checking whether the logged-in `user_id` matches `organizer_id`/`user_id` on the record being modified), not by a `Role` column on the table.
+##  Architecture & Tech Stack
 
-## Planning Documents (`/docs`)
+The solution is split into three projects:
+1.  **`RaceDayAPI`**: The RESTful backend. Uses SQL Server, EF Core (Code First), and JWT Authentication. It handles all business logic and Azure Blob Storage uploads.
+2.  **`RaceDay.MVC`**: The front-end. It contains **no direct database access**. It communicates with the API using `HttpClient` and maintains user state using Session Cookies.
+3.  **`RaceDay.Tests`**: xUnit test suite for validating API authentication and role logic.
 
-| File | Description |
-|---|---|
-| `RaceDay_ERD.png` | Entity Relationship Diagram for the full RaceDay data model (8 entities). |
-| `API_Endpoint_Plan.md` | Full table of every planned API endpoint: method, route, description, role required, request body, and expected response. |
-| `RaceDay_Schema.sql` | SQL Server script that creates the schema (with PKs, FKs, and constraints) and seeds it with sample data. |
-| `validate-structure.yml` | GitHub Actions workflow (place in `.github/workflows/`) that checks the `/docs` folder and required files exist on every push/PR. |
+**Technologies Used:**
+*   C# 12 / .NET 8
+*   ASP.NET Core Web API & MVC
+*   Entity Framework Core (SQL Server)
+*   JWT & Session Authentication
+*   Azure.Storage.Blobs (SDK)
+*   Docker
+*   xUnit
+*   GitHub Actions
 
-### ERD Diagram
+---
 
-The ERD is included as a PNG file in the repository. You can view it <img width="2312" height="3179" alt="erd-draft-v5-final" src="https://github.com/user-attachments/assets/27001f7b-233c-4222-acd4-b408df054332" />
+## User Roles
 
+The MVC application features dynamic navigation based on the user's role:
+*   **Organiser:** Can create, edit, and delete events; manage categories; view all enrolments; capture results; and upload event banner images to Azure.
+*   **Participant:** Can view upcoming events, enroll in categories, view their personal enrollment history, and view their published results.
+*   **Unauthenticated Users:** Can only view public event listings and are blocked from protected pages.
 
-**Key relationships:**
+---
 
-- `User` (1) to `Event` (M): one-to-many. A User can organise many Events (`Event.organizer_id`).
-- `Event` (1) to `Race` (M): one-to-many. An Event can have many Races (e.g. different distances).
-- `User` (1) to `Registration` (M): one-to-many. A User can hold many Registrations, across different races.
-- `Race` (1) to `Registration` (M): one-to-many. A Race can have many Registrations, but a User can only register once per Race (`UQ_Registration_UserRace`).
-- `Registration` (1) to `Result` (1): one-to-one. Each Registration can have one final Result.
-- `Registration` (1) to `Payment` (1): one-to-one. Each Registration can have one Payment.
-- `Event` (M) to `Sponsor` (M): many-to-many, resolved through the `EventSponsor` junction table (composite primary key of `event_id` + `sponsor_id`).
+##  Setup & Running Locally
 
-## CI/CD
+### Prerequisites
+*   [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+*   [SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (or LocalDB)
+*   [Visual Studio 2022](https://visualstudio.microsoft.com/)
+*   [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for containerization)
 
-A GitHub Actions workflow (`validate-structure.yml`) validates that the `/docs` folder exists and contains the required planning files on every push and pull request to `main`.
-
-**CI screenshot:** 
-<img width="1007" height="572" alt="workflow" src="https://github.com/user-attachments/assets/ef2b58ba-45ad-428f-9dc7-bc66b86fca42" />
-<img width="1460" height="496" alt="workflow 1" src="https://github.com/user-attachments/assets/7b09c80b-5943-4448-b77d-8b4c3c2dc2d5" />
-<img width="1041" height="570" alt="workflow3" src="https://github.com/user-attachments/assets/9a3db8e9-3b95-47a6-9611-33d5f40f3e5a" />
-
-
-## Video Walkthrough
-
-**YouTube (unlisted):** 
-https://youtu.be/1OOVXaJ33UM
-
-## Repository Structure
-
-```
-/
-├── docs/
-│   ├── RaceDay_ERD.png
-│   ├── API_Endpoint_Plan.md
-│   └── RaceDay_Schema.sql
-├── .github/
-│   └── workflows/
-│       └── validate-structure.yml
-└── README.md
-```
-
+### 1. Database Setup
+1. Open `RaceDayAPI/appsettings.json` and verify your SQL Server connection string.
+2. Open the Package Manager Console (Default project: `RaceDayAPI`) and run:
+   ```powershell
+   Update-Database
