@@ -2,7 +2,7 @@
 
 A complete, end-to-end web platform for managing sailing regattas and catamaran racing events. This repository contains the RESTful API, the MVC Web Application, and the automated testing suite.
 
-## 📋Table of Contents
+## Table of Contents
 1. [System Overview](#-system-overview)
 2. [Architecture & Tech Stack](#-architecture--tech-stack)
 3. [User Roles](#-user-roles)
